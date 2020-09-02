@@ -14,6 +14,8 @@ function App() {
 
       setRepositories(response.data);
     }
+
+    loadRepositories();
   }, []);
 
   async function handleAddRepository() {
