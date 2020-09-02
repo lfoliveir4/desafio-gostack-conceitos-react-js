@@ -8,6 +8,14 @@ import "./styles.css";
 function App() {
   const [repositories, setRepositories] = React.useState([]);
 
+  React.useEffect(() => {
+    async function loadRepositories() {
+      const response = await api.get("/repositories");
+
+      setRepositories(response.data);
+    }
+  }, []);
+
   async function handleAddRepository() {
     const response = await api.post("repositories", {
       id: uuid(),
@@ -20,17 +28,24 @@ function App() {
     setRepositories([...repositories, response.data]);
   }
 
-  async function handleRemoveRepository(id) {}
+  async function handleRemoveRepository(id) {
+    await api.delete(`/repositories/${id}`);
+
+    setRepositories(repositories.filter((repository) => repository.id !== id));
+  }
 
   return (
     <div>
       <ul data-testid="repository-list">
         {repositories.map((repositorie) => (
-          <li key={repositorie}>
-            {repositorie.title}{" "}
-            <button onClick={() => handleRemoveRepository(repositorie.id)}>
-              Remover
-            </button>
+          <li key={repositorie.id}>
+            {repositorie.title}
+
+            <div>
+              <button onClick={() => handleRemoveRepository(repositorie.id)}>
+                Remover
+              </button>
+            </div>
           </li>
         ))}
       </ul>
